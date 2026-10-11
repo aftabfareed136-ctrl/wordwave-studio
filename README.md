@@ -25,7 +25,25 @@ wordwave render my-script.txt -o video.mp4 --background cyberpunk --animator pop
 | Looks / adjustment layers | 4 procedural animated backgrounds: `cyberpunk` `neon` `ember` `minimal` |
 | Per-character 3D | per-word scale/position/rotation/glow/pill-highlight, staggered to the voice |
 
-## Quickstart
+## Web UI (no terminal needed)
+
+Prefer a browser? Launch the Gradio app:
+
+```bash
+pip install -r requirements.txt   # includes gradio
+python -m wordwave.webui
+```
+
+Then open the URL it prints (usually http://127.0.0.1:7860) — paste your
+script, pick a voice/look/animator, hit **Render**, and download the MP4.
+
+**Run it 100% in the browser with GitHub Codespaces** (free, no local setup):
+1. Open https://github.com/aftabfareed136-ctrl/wordwave-studio
+2. Click **Code** → **Codespaces** → **Create codespace**
+3. When the terminal appears: `python -m wordwave.webui`
+4. Click the forwarded-port popup (or the **Ports** tab → open port 7860)
+
+## Quickstart (terminal)
 
 ```bash
 pip install edge-tts Pillow numpy

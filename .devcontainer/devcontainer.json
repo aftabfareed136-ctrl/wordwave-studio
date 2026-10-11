@@ -1,0 +1,1 @@
+{"forwardPorts":[7860],"image":"mcr.microsoft.com/devcontainers/python:3.11","name":"WordWave Studio","portsAttributes":{"7860":{"label":"WordWave web UI","onAutoForward":"notify"}},"postCreateCommand":"sudo apt-get update && sudo apt-get install -y ffmpeg && pip install -r requirements.txt"}

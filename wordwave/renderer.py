@@ -52,7 +52,8 @@ def build_composition(script_path: str, voice: str, background: str, animator: s
     return comp, audio_path, duration
 
 
-def render_frames(comp: Composition, out_path: str, crf: int = 18, preset: str = "veryfast"):
+def render_frames(comp: Composition, out_path: str, crf: int = 18,
+                  preset: str = "veryfast", progress_cb=None):
     n = int(comp.duration * comp.fps)
     cmd = ["ffmpeg", "-y", "-v", "error",
            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{comp.w}x{comp.h}",
@@ -66,11 +67,18 @@ def render_frames(comp: Composition, out_path: str, crf: int = 18, preset: str =
             frame = comp.frame(t)
             proc.stdin.write(frame.tobytes())
             if i % max(1, n // 20) == 0:
-                print(f"\r  rendering: {100 * i / n:5.1f}%  ({i}/{n} frames)", end="", flush=True)
+                frac = i / n
+                if progress_cb:
+                    progress_cb(frac)
+                else:
+                    print(f"\r  rendering: {100 * frac:5.1f}%  ({i}/{n} frames)", end="", flush=True)
     finally:
         proc.stdin.close()
         proc.wait()
-    print(f"\r  rendering: 100.0%  ({n}/{n} frames)", flush=True)
+    if progress_cb:
+        progress_cb(1.0)
+    else:
+        print(f"\r  rendering: 100.0%  ({n}/{n} frames)", flush=True)
     if proc.returncode != 0:
         raise RuntimeError("ffmpeg frame encode failed")
 
@@ -87,7 +95,8 @@ def mux_audio(video_path: str, audio_path: str, out_path: str, duration: float):
 
 def render(script_path: str, out_path: str, voice: str = "en-US-AriaNeural",
            background: str = "cyberpunk", animator: str = "pop",
-           w: int = 1080, h: int = 1920, fps: int = 30) -> str:
+           w: int = 1080, h: int = 1920, fps: int = 30,
+           progress_cb=None) -> str:
     print(f"WordWave Studio — {os.path.basename(script_path)} -> {out_path}", flush=True)
     print(f"  look: {background}  |  animator: {animator}  |  {w}x{h}@{fps}", flush=True)
     comp, audio_path, duration = build_composition(
@@ -95,7 +104,7 @@ def render(script_path: str, out_path: str, voice: str = "en-US-AriaNeural",
     print(f"  duration: {duration:.1f}s", flush=True)
     with tempfile.TemporaryDirectory() as tmp:
         silent = os.path.join(tmp, "silent.mp4")
-        render_frames(comp, silent)
+        render_frames(comp, silent, progress_cb=progress_cb)
         mux_audio(silent, audio_path, out_path, duration)
     size_mb = os.path.getsize(out_path) / 1e6
     print(f"  done: {out_path} ({size_mb:.1f} MB)", flush=True)
