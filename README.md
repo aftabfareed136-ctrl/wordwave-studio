@@ -30,7 +30,6 @@ wordwave render my-script.txt -o video.mp4 --background cyberpunk --animator pop
 ```bash
 pip install edge-tts Pillow numpy
 git clone <this-repo> && cd wordwave-studio
-
 # list voices & styles
 python -m wordwave.cli voices --locale ur-PK     # Urdu voices
 python -m wordwave.cli styles
@@ -44,6 +43,13 @@ python -m wordwave.cli render script.txt -o out.mp4 \
 ```
 
 Needs `ffmpeg` on PATH. First render downloads the voice model data via edge-tts; re-renders are cached (`~/.cache/wordwave`).
+
+> **Network note:** the TTS client (`wordwave/edge_ws.py`) speaks the edge-tts
+> websocket protocol through a plain CONNECT tunnel instead of aiohttp, so it
+> keeps working behind proxies that mangle the websocket handshake headers.
+
+Render speed is ~0.7s/frame at 1080×1920 on CPU (~20s compute per 1s of
+video) — fine for shorts; drop to 720×1280 (`--ar` accepts `WxH`) for drafts.
 
 ## Script format
 
