@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install package
+        run: pip install -e .[dev]
+      - name: Run tests
+        run: pytest -q
+      - name: Smoke test (frame render, no network)
+        run: |
+          python - <<'EOF'
+          from wordwave.timeline import Composition, KineticTextLayer, ScoredWord, SceneTake
+          from wordwave.presets import BackgroundLayer
+          words = [ScoredWord("Hello", 0.2, 0.6), ScoredWord("world", 0.7, 1.1)]
+          comp = Composition(540, 960, 30, 2.0)
+          comp.add(BackgroundLayer("cyberpunk"))
+          comp.add(KineticTextLayer([SceneTake(words, start=0.0, end=1.9)], animator="pop"))
+          for t in (0.1, 0.5, 1.0, 1.5):
+              f = comp.frame(t)
+              assert f.size == (540, 960)
+          print("smoke OK")
+          EOF

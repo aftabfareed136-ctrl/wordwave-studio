@@ -1,0 +1,28 @@
+[project]
+name = "wordwave-studio"
+version = "0.1.0"
+description = "Script → word-by-word kinetic typography video engine (AE-style timeline, keyframes & presets)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "WordWave Studio" }]
+keywords = ["video", "kinetic-typography", "word-by-word", "tts", "animation", "ffmpeg"]
+dependencies = [
+    "edge-tts>=7.0.0",
+    "Pillow>=10.0.0",
+    "numpy>=1.24.0",
+]
+
+[project.scripts]
+wordwave = "wordwave.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["wordwave*"]

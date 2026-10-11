@@ -1,0 +1,13 @@
+# WordWave Studio demo script
+# Lines starting with # are ignored. Blank lines break scenes.
+# !word = keyword (always accent-coloured). ## = title card. [pause 0.8] = beat.
+
+## WORD BY WORD
+
+Every great video you have ever watched was built one !word at a time.
+
+[pause 0.6] After Effects animators call this kinetic typography.
+
+WordWave reads your !script, speaks it with AI voice, and lands every single word exactly on the !beat.
+
+Pop. Rise. Karaoke. Typewriter. Pick an animator, pick a look, and !render.
